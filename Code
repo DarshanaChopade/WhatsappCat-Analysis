@@ -1,0 +1,87 @@
+!pip install PyPDF2
+!pip install pymupdf
+import pandas as pd
+from PyPDF2 import PdfReader
+
+def read_whatsapp_pdf(file_path):
+    with open(file_path, 'rb') as file:
+        pdf_reader = PdfReader(file)
+        text = ''
+        for page_num in range(len(pdf_reader.pages)):
+            text += pdf_reader.pages[page_num].extract_text()
+    return text
+
+# Replace 'your_whatsapp_chat.pdf' with the path to your WhatsApp chat PDF file
+whatsapp_data = read_whatsapp_pdf('WhatsApp Chat with Marvella Queens👸.pdf')
+#Defining Specific Functions or Methods for Preprocessing
+import re
+
+def preprocess_text(text):
+    # Remove non-alphanumeric characters and extra whitespaces
+    text = re.sub(r'[^a-zA-Z0-9\s]', '', text)
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
+# Apply preprocessing to the loaded data
+preprocessed_data = preprocess_text(whatsapp_data)
+
+#Incorporating NLP Techniques for Cleaning Text Data
+import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
+def clean_text(text):
+    stop_words = set(stopwords.words('english'))
+    words = word_tokenize(text)
+    filtered_words = [word.lower() for word in words if word.isalpha() and word.lower() not in stop_words]
+    return ' '.join(filtered_words)
+
+# Placeholder for preprocessed_data
+preprocessed_data = "Your preprocessed text goes here."
+
+# Apply NLP cleaning to the preprocessed data
+cleaned_data = clean_text(preprocessed_data)
+
+print("Original Text:")
+print(preprocessed_data)
+print("\nCleaned Text:")
+print(cleaned_data)
+
+# Apply NLP cleaning to the preprocessed data
+
+cleaned_data = clean_text(preprocessed_data)
+
+#Creating Word Clouds
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+
+def generate_wordcloud(text):
+    wordcloud = WordCloud(width=800, height=400, random_state=21, max_font_size=110, background_color='white').generate(text)
+    plt.figure(figsize=(10, 7))
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis('off')
+    plt.show()
+
+# Generate and display the word cloud
+generate_wordcloud(cleaned_data)
+
+#Save Word Cloud Images
+def save_wordcloud_image(text, file_path):
+    wordcloud = WordCloud(width=800, height=400, random_state=21, max_font_size=110, background_color='white').generate(text)
+    wordcloud.to_file(file_path)
+
+# Replace 'wordcloud_image.png' with the desired image file path
+save_wordcloud_image(cleaned_data, 'wordcloud_image.png')
+
+#Extracting Information through Sentiment Analysis
+from textblob import TextBlob
+
+def perform_sentiment_analysis(text):
+    analysis = TextBlob(text)
+    return analysis.sentiment.polarity  # Range between -1 and 1, where negative values indicate negative sentiment.
+
+# Get sentiment analysis result
+sentiment_score = perform_sentiment_analysis(cleaned_data)
+print("Sentiment Score:", sentiment_score)
